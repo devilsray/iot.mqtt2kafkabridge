@@ -40,14 +40,15 @@ public class MqttController {
             throws InterruptedException, org.eclipse.paho.client.mqttv3.MqttException {
         List<MqttSubscribeModel> messages = new ArrayList<>();
         CountDownLatch countDownLatch = new CountDownLatch(10);
-        Mqtt.getInstance().subscribeWithResponse(topic, (s, mqttMessage) -> {
-            MqttSubscribeModel mqttSubscribeModel = new MqttSubscribeModel();
-            mqttSubscribeModel.setId(mqttMessage.getId());
-            mqttSubscribeModel.setMessage(new String(mqttMessage.getPayload()));
-            mqttSubscribeModel.setQos(mqttMessage.getQos());
-            messages.add(mqttSubscribeModel);
-            countDownLatch.countDown();
-        });
+        Mqtt.getInstance();
+//        Mqtt.getInstance().subscribeWithResponse(topic, (s, mqttMessage) -> {
+//            MqttSubscribeModel mqttSubscribeModel = new MqttSubscribeModel();
+//            mqttSubscribeModel.setId(mqttMessage.getId());
+//            mqttSubscribeModel.setMessage(new String(mqttMessage.getPayload()));
+//            mqttSubscribeModel.setQos(mqttMessage.getQos());
+//            messages.add(mqttSubscribeModel);
+//            countDownLatch.countDown();
+//        });
 
         countDownLatch.await(waitMillis, TimeUnit.MILLISECONDS);
 

@@ -10,7 +10,8 @@ public class Mqtt {
     private static final String MQTT_PUBLISHER_ID = "test"; //FIXME
     private static final String MQTT_SERVER_ADDRES= "tcp://bella.fritz.box:1883"; // FIXME
     private static IMqttClient instance;
-
+    private static MessageSubscriber subscriber = new MessageSubscriber();
+    
     public static IMqttClient getInstance() {
         try {
             if (instance == null) {
@@ -24,6 +25,7 @@ public class Mqtt {
 
             if (!instance.isConnected()) {
                 instance.connect(options);
+                instance.subscribe("#",  subscriber);
             }
         } catch (MqttException e) {
             e.printStackTrace();
