@@ -15,13 +15,9 @@ public class BridgeController {
 
     private final IMqttClient mqtt;
 
-
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private final String topic;
 
-    public void sendMessage(String msg) {
-        kafkaTemplate.send(topic, msg);
-    }
+    private final String topic;
 
     @Autowired
     public BridgeController(KafkaTemplate<String, String> kafkaTemplate, Mqtt mqtt, @Value(value = "${bridge.kafka.topic}") String topic, @Value(value = "${bridge.mqtt.topic}") String[] mqttTopics) {
@@ -31,9 +27,8 @@ public class BridgeController {
         // FIXME better initialization and error handling
         var receiver = new IMqttMessageListener(){
             @Override
-            public void messageArrived(String s, MqttMessage mqttMessage) {
-                System.out.println(s);
-                sendMessage(mqttMessage.toString());
+            public void messageArrived(String mqttTopic, MqttMessage mqttMessage) {
+                kafkaTemplate.send(topic, mqttTopic, mqttMessage.toString());
             }
         };
 
