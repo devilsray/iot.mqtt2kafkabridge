@@ -4,37 +4,26 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Mqtt {
 
-    private static final String MQTT_PUBLISHER_ID = "test"; //FIXME
-    private static final String MQTT_SERVER_ADDRES= "tcp://bella.fritz.box:1883"; // FIXME
-    private static IMqttClient instance;
-    private static MessageSubscriber subscriber = new MessageSubscriber();
-    
-    public static IMqttClient getInstance() {
-        try {
-            if (instance == null) {
-                instance = new MqttClient(MQTT_SERVER_ADDRES, MQTT_PUBLISHER_ID);
-            }
+    private IMqttClient instance;
 
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setAutomaticReconnect(true);
-            options.setCleanSession(true);
-            options.setConnectionTimeout(10);
-
-            if (!instance.isConnected()) {
-                instance.connect(options);
-                instance.subscribe("#",  subscriber);
-            }
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
-        return instance;
+    @Autowired
+    public Mqtt(@Value(value = "${mqtt.address}") String address, @Value(value = "${mqtt.id}") String publisherId) throws MqttException {
+        instance = new MqttClient(address, publisherId);
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setAutomaticReconnect(true);
+        options.setCleanSession(true);
+        options.setConnectionTimeout(10);
+        instance.connect(options);
     }
 
-    private Mqtt() {
-
+    public IMqttClient getInstance() {
+        return instance;
     }
 }
